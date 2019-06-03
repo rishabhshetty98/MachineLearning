@@ -1,13 +1,10 @@
 import tensorflow as tf
-
 from tensorflow.examples.tutorials.mnist import input_data
-
 mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
-
-
 
 n_classes = 10
 batch_size = 128
+
 
 X = tf.placeholder('float',[None, 784])
 y = tf.placeholder('float')
@@ -16,7 +13,7 @@ keep_rate = 0.8
 keep_prob = tf.placeholder(tf.float32)
 
 def conv2d(x, W):
-    return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding='SAME')
+    return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding='SAME',use_cudnn_on_gpu=True)
 
 def maxpool2d(x):
     return tf.nn.max_pool(x, ksize=[1,2,2,1], strides=[1,2,2,1], padding = 'SAME')
@@ -33,15 +30,14 @@ def convolutional_neural_network(x):
 
     x = tf.reshape(x, shape=[-1,28,28,1])
 
-    conv1 = tf.nn.relu(conv2d(x, weights['w_conv1']+ biases['b_conv1']))
+    conv1 = tf.nn.relu(conv2d(x, weights['w_conv1'])+ biases['b_conv1'])
     conv1 = maxpool2d(conv1)
 
-    conv2 = tf.nn.relu(conv2d(conv1, weights['w_conv2']+ biases['b_conv2']))
+    conv2 = tf.nn.relu(conv2d(conv1, weights['w_conv2'])+ biases['b_conv2'])
     conv2 = maxpool2d(conv2)
 
     fc = tf.reshape(conv2,[-1,7*7*64])
     fc = tf.nn.relu(tf.matmul(fc, weights['w_fc'])+biases['b_fc'])
-
     fc = tf.nn.dropout(fc, keep_rate)
 
     output = tf.matmul(fc, weights['out']) + biases['out']

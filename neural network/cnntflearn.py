@@ -1,7 +1,7 @@
 import tflearn
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.core import input_data, dropout, fully_connected
-from tf.learn.layers.estimator import regression
+from tflearn.layers.estimator import regression
 import tflearn.datasets.mnist as mnist
 
 X,y, test_x, test_y = mnist.load_data(one_hot=True)
@@ -25,6 +25,13 @@ convnet = regression(convnet, optimizer = 'adam', learning_rate = 0.01, loss='ca
 
 model = tflearn.DNN(convnet)
 
-model.fit({'input':X},{'targets':y}, n_epoch=10, validation_set=({'input':test_x},{'targets':test_y}, snapshot_step=500, show_metric=True,run_id='mnist'))
+##model.fit({'input':X},{'targets':y}, n_epoch=10, validation_set=({'input':test_x},{'targets':test_y}), snapshot_step=500, show_metric=True,run_id='mnist')
+##
+##model.save('tflearncnn.model')
 
-model.save('tflearncnn.model')
+model.load('tflearncnn.model')
+
+import numpy as np
+print( np.round(model.predict([test_x[1]])[0]) )
+print(test_y[1])
+
